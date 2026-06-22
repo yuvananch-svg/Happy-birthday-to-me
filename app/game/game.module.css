@@ -1,0 +1,78 @@
+.gameShell {
+  width: min(1120px, calc(100% - 28px));
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 22px 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  gap: 16px;
+}
+
+.topBar {
+  min-height: 88px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 4px solid var(--line);
+  box-shadow: 8px 8px 0 var(--line);
+  background: var(--panel);
+}
+
+.kicker {
+  margin: 0;
+  color: var(--accent-dark);
+  font-size: 12px;
+}
+
+.topBar h1 {
+  margin: 4px 0 0;
+  font-size: clamp(24px, 4vw, 42px);
+  line-height: 1.05;
+}
+
+.dateBadges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.dateBadges span {
+  border: 3px solid var(--line);
+  background: var(--accent);
+  color: #fffdf8;
+  padding: 8px 10px;
+  box-shadow: 4px 4px 0 var(--line);
+  white-space: nowrap;
+}
+
+.gameLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 16px;
+}
+
+.leftColumn,
+.rightColumn {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+@media (max-width: 820px) {
+  .gameShell {
+    width: min(100% - 20px, 640px);
+    padding: 10px 0;
+  }
+
+  .topBar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .gameLayout {
+    grid-template-columns: 1fr;
+  }
+}

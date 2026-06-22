@@ -1,0 +1,50 @@
+:root {
+  --ink: #15151a;
+  --paper: #f4f0e8;
+  --panel: #fff9ef;
+  --line: #2e2b2f;
+  --accent: #d94f70;
+  --accent-dark: #8f2f48;
+  --green: #83b96f;
+  --green-dark: #4d7b4c;
+  --path: #d8b96f;
+  --sky: #9fd4d8;
+  --shadow: rgba(21, 21, 26, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background:
+    linear-gradient(45deg, rgba(21, 21, 26, 0.04) 25%, transparent 25%) 0 0 / 16px 16px,
+    linear-gradient(-45deg, rgba(21, 21, 26, 0.035) 25%, transparent 25%) 0 0 / 16px 16px,
+    var(--paper);
+}
+
+body {
+  min-height: 100dvh;
+  margin: 0;
+  color: var(--ink);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f6f1e8;
+    --paper: #18191f;
+    --panel: #24242c;
+    --line: #f6f1e8;
+    --accent: #f06c8a;
+    --accent-dark: #ff9ab0;
+    --sky: #517b89;
+    --shadow: rgba(0, 0, 0, 0.42);
+  }
+}

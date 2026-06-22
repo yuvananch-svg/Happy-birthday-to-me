@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anniversary Quest</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="game-shell" aria-label="Anniversary Quest demo">
+      <section class="top-bar" aria-label="game status">
+        <div>
+          <p class="kicker">Anniversary Quest</p>
+          <h1>2 Years 5 Months + Birthday</h1>
+        </div>
+        <div class="date-badges" aria-label="important dates">
+          <span>9 Jul</span>
+          <span>12 Jul</span>
+        </div>
+      </section>
+
+      <section class="game-layout">
+        <div class="screen-frame">
+          <div class="screen">
+            <div class="sky"></div>
+            <div class="map" id="map" aria-hidden="true">
+              <div class="road road-main"></div>
+              <div class="road road-anniversary"></div>
+              <div class="road road-birthday"></div>
+              <div class="road road-childhood"></div>
+              <div class="road road-final"></div>
+              <div class="location location-start">START</div>
+              <div class="location location-anniversary">9 JUL</div>
+              <div class="location location-birthday">12 JUL</div>
+              <div class="location location-childhood">HOME</div>
+              <div class="location location-final">GATE</div>
+              <div class="tile grass grass-a"></div>
+              <div class="tile grass grass-b"></div>
+              <div class="tile flower flower-a"></div>
+              <div class="tile flower flower-b"></div>
+              <div class="tile house house-a"></div>
+              <div class="tile house house-b"></div>
+              <div class="tile tree tree-a"></div>
+              <div class="tile tree tree-b"></div>
+              <div class="hero" id="hero">
+                <span class="hero-hair"></span>
+                <span class="hero-face"></span>
+                <span class="hero-body"></span>
+                <span class="hero-shadow"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="journal" aria-label="story journal">
+          <h2>Journey Log</h2>
+          <ol id="journalList">
+            <li>เริ่มที่เมืองความทรงจำ</li>
+          </ol>
+        </aside>
+      </section>
+
+      <section class="dialogue-panel" aria-live="polite">
+        <div class="speaker-row">
+          <span class="portrait" aria-hidden="true"></span>
+          <div>
+            <p class="speaker" id="speaker">Pixel Guide</p>
+            <p class="chapter" id="chapter">เมืองความทรงจำ</p>
+          </div>
+        </div>
+        <p class="dialogue" id="dialogue"></p>
+        <div class="pass-row">
+          <button class="pass-button" id="passButton" type="button">PASS</button>
+          <span id="progressHint">กด PASS หรือ Space เพื่ออ่านต่อ</span>
+        </div>
+        <div class="choices is-hidden" id="choices"></div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
