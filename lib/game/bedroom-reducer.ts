@@ -106,6 +106,16 @@ function finishIntro(state: BedroomGameState): BedroomGameState {
 function advanceIntroPass(state: BedroomGameState): BedroomGameState {
   const idx = state.cutsceneIndex;
 
+  // Video must play 5s→10s before mother lines; ignore PASS while waiting.
+  if (state.introPhase === "video-resume") {
+    return state;
+  }
+
+  // CinematicIntroLayer seeks video then dispatches INTRO_ROOM_FADE_COMPLETE.
+  if (state.introPhase === "room-dialogue" && state.dialogue === null) {
+    return state;
+  }
+
   if (state.introPhase === "hero-dialogue" && idx === INTRO_BEATS.HERO_END_INDEX) {
     return { ...state, introPhase: "video-resume", dialogue: null };
   }

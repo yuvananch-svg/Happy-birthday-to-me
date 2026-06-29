@@ -96,6 +96,44 @@ describe("bedroom reducer", () => {
     expect(state.heroAwake).toBe(true);
   });
 
+  it("ignores PASS during video-resume until mother pause at 10s", () => {
+    let state = createInitialBedroomState();
+
+    state = bedroomReducer(state, { type: "INTRO_REACHED_HERO_PAUSE" });
+    state = bedroomReducer(state, { type: "PASS_DIALOGUE" });
+    state = bedroomReducer(state, { type: "PASS_DIALOGUE" });
+    state = bedroomReducer(state, { type: "PASS_DIALOGUE" });
+
+    expect(state.introPhase).toBe("video-resume");
+    expect(state.dialogue).toBeNull();
+    expect(state.cutsceneIndex).toBe(3);
+
+    state = bedroomReducer(state, { type: "PASS_DIALOGUE" });
+
+    expect(state.introPhase).toBe("video-resume");
+    expect(state.dialogue).toBeNull();
+    expect(state.cutsceneIndex).toBe(3);
+
+    state = bedroomReducer(state, { type: "INTRO_REACHED_MOTHER_PAUSE" });
+
+    expect(state.introPhase).toBe("mother-dialogue");
+    expect(state.dialogue?.text).toBe(INTRO_CUTSCENE[3].text);
+    expect(state.motherVisible).toBe(true);
+  });
+
+  it("ignores PASS during room-dialogue fade until video seek completes", () => {
+    const state = reachMotherDialogueEnd();
+
+    expect(state.introPhase).toBe("room-dialogue");
+    expect(state.dialogue).toBeNull();
+
+    const afterPass = bedroomReducer(state, { type: "PASS_DIALOGUE" });
+
+    expect(afterPass.introPhase).toBe("room-dialogue");
+    expect(afterPass.dialogue).toBeNull();
+    expect(afterPass.cutsceneIndex).toBe(5);
+  });
+
   it("plays all 11 intro lines in order through room-dialogue", () => {
     let state = createInitialBedroomState();
     const seen: string[] = [];

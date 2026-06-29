@@ -61,6 +61,15 @@ export function CinematicIntroLayer({
   }, [introPhase, startPlayback]);
 
   useEffect(() => {
+    if (introPhase !== "hero-dialogue") return;
+
+    const video = videoRef.current;
+    if (video && !video.paused) {
+      video.pause();
+    }
+  }, [introPhase]);
+
+  useEffect(() => {
     if (introPhase !== "video-resume") return;
 
     const video = videoRef.current;
@@ -69,6 +78,16 @@ export function CinematicIntroLayer({
     motherPauseFired.current = false;
     video.currentTime = OPENING_VIDEO_MARKERS.RESUME_FROM;
     void video.play();
+  }, [introPhase]);
+
+  useEffect(() => {
+    if (introPhase !== "mother-dialogue") return;
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.currentTime = OPENING_VIDEO_MARKERS.MOTHER_PAUSE_AT;
+    video.pause();
   }, [introPhase]);
 
   useEffect(() => {
@@ -107,6 +126,7 @@ export function CinematicIntroLayer({
       !motherPauseFired.current
     ) {
       motherPauseFired.current = true;
+      video.currentTime = OPENING_VIDEO_MARKERS.MOTHER_PAUSE_AT;
       video.pause();
       onMotherPause();
     }
