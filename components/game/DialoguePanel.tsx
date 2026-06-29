@@ -9,6 +9,10 @@ import {
   useState
 } from "react";
 import type { CutsceneLine, CutscenePortrait } from "@/lib/game/scenes/bedroom/cutscenes";
+import {
+  HERO_PORTRAIT_DIALOGUE,
+  MOTHER_PORTRAIT_DIALOGUE
+} from "@/lib/game/scenes/bedroom/assets";
 import styles from "./dialogue-panel.module.css";
 
 const CHAR_DELAY_MS = 40;
@@ -28,6 +32,16 @@ function portraitClass(portrait: CutscenePortrait) {
   if (portrait === "mother") return styles.portraitMother;
   if (portrait === "system") return styles.portraitSystem;
   return styles.portraitHero;
+}
+
+function portraitStyle(portrait: CutscenePortrait): React.CSSProperties | undefined {
+  if (portrait === "mother") {
+    return { backgroundImage: `url("${MOTHER_PORTRAIT_DIALOGUE}")` };
+  }
+  if (portrait === "hero") {
+    return { backgroundImage: `url("${HERO_PORTRAIT_DIALOGUE}")` };
+  }
+  return undefined;
 }
 
 export const DialoguePanel = forwardRef<DialoguePanelHandle, DialoguePanelProps>(
@@ -113,7 +127,11 @@ export const DialoguePanel = forwardRef<DialoguePanelHandle, DialoguePanelProps>
     return (
       <section className={styles.panel} aria-live="polite">
         <div className={styles.speakerRow}>
-          <span className={`${styles.portrait} ${portraitClass(line.portrait)}`} aria-hidden="true" />
+          <span
+            className={`${styles.portrait} ${portraitClass(line.portrait)}`}
+            style={portraitStyle(line.portrait)}
+            aria-hidden="true"
+          />
           <div>
             <p className={styles.speaker}>{line.speaker}</p>
             <p className={styles.meta}>{line.meta}</p>

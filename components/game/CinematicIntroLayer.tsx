@@ -31,6 +31,10 @@ export function CinematicIntroLayer({
     const video = videoRef.current;
     if (!video) return;
 
+    if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
+      video.load();
+    }
+
     try {
       await video.play();
       setNeedsTap(false);
@@ -38,6 +42,14 @@ export function CinematicIntroLayer({
       setNeedsTap(true);
     }
   }, []);
+
+  const handleVideoError = useCallback(() => {
+    if (introPhase !== "silent" || heroPauseFired.current) return;
+
+    heroPauseFired.current = true;
+    setNeedsTap(false);
+    onHeroPause();
+  }, [introPhase, onHeroPause]);
 
   useEffect(() => {
     if (introPhase === "silent") {
@@ -112,6 +124,7 @@ export function CinematicIntroLayer({
         muted
         preload="auto"
         onTimeUpdate={handleTimeUpdate}
+        onError={handleVideoError}
       />
 
       {needsTap && introPhase === "silent" ? (

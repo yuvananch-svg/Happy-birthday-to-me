@@ -1,12 +1,14 @@
+import { withBasePath } from "@/lib/navigation";
+
 /** Locked mother NPC + F1 memory assets (2026-06-27). */
 
 /** Fullscreen opening cinematic — Higgsfield share `-jc7HRyjwkQ`. */
-export const OPENING_INTRO_VIDEO = "/cutscenes/opening-intro.mp4";
+export const OPENING_INTRO_VIDEO = withBasePath("/cutscenes/opening-intro.mp4");
 
-export const HERO_PORTRAIT_DIALOGUE = "/npc/hero-portrait.png";
-export const MOTHER_PORTRAIT_DIALOGUE = "/npc/mother-portrait.png";
-export const MOTHER_F1_MEMORY_IMAGE = "/memories/images/mother-f1.png";
-export const MOTHER_FULLBODY_NOBG = "/npc/mother-fullbody-nobg.png";
+export const HERO_PORTRAIT_DIALOGUE = withBasePath("/npc/hero-portrait.png");
+export const MOTHER_PORTRAIT_DIALOGUE = withBasePath("/npc/mother-portrait.png");
+export const MOTHER_F1_MEMORY_IMAGE = withBasePath("/memories/images/mother-f1.png");
+export const MOTHER_FULLBODY_NOBG = withBasePath("/npc/mother-fullbody-nobg.png");
 
 /** Higgsfield source URLs — for regeneration only, not loaded at runtime. */
 export const HERO_CANONICAL_SOURCE_URLS = {

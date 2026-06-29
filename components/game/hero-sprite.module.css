@@ -31,7 +31,7 @@
   top: 0;
   width: 112px;
   height: 138px;
-  background-image: url("/prototypes/hero-front-body.png");
+  background-image: var(--hero-front-body);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center bottom;
@@ -43,7 +43,7 @@
 }
 
 .hero[data-facing="up"] .heroSprite {
-  background-image: url("/prototypes/hero-back-body.png");
+  background-image: var(--hero-back-body);
   top: 0;
   height: 120px;
 }
@@ -88,11 +88,11 @@
 }
 
 .hero[data-facing="right"] .heroSprite {
-  background-image: url("/prototypes/hero-side-body.png");
+  background-image: var(--hero-side-body);
 }
 
 .hero[data-facing="left"] .heroSprite {
-  background-image: url("/prototypes/hero-side-body.png");
+  background-image: var(--hero-side-body);
   transform: scaleX(-1);
 }
 

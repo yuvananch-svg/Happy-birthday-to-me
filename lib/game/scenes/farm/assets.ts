@@ -1,6 +1,8 @@
+import { withBasePath } from "@/lib/navigation";
+
 /** Outdoor farm hub — Higgsfield share `uluE0Nb8i70`. */
 
-export const FARM_SCENE_IMAGE = "/scenes/farm/farm-outdoor.png";
+export const FARM_SCENE_IMAGE = withBasePath("/scenes/farm/farm-outdoor.png");
 
 /** Higgsfield source URL — for regeneration only, not loaded at runtime. */
 export const FARM_CANONICAL_SOURCE_URLS = {

@@ -57,13 +57,11 @@
 
 .portraitHero {
   background-color: #e8dcc8;
-  background-image: url("/npc/hero-portrait.png");
   background-position: center 38%;
 }
 
 .portraitMother {
   background-color: #e8dcc8;
-  background-image: url("/npc/mother-portrait.png");
   background-position: center 36%;
 }
 

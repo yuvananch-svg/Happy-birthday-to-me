@@ -1,4 +1,5 @@
 import type { Rect } from "@/lib/game/engine/types";
+import { withBasePath } from "@/lib/navigation";
 
 /** Large bedroom world — matches `public/scenes/bedroom/bedroom.png` (3840×2160). */
 export const BEDROOM_WORLD = { w: 3840, h: 2160 } as const;
@@ -18,7 +19,7 @@ export const BEDROOM_PLAYER_DEFAULT = {
   moving: false
 };
 
-export const BEDROOM_SCENE_IMAGE = "/scenes/bedroom/bedroom.png";
+export const BEDROOM_SCENE_IMAGE = withBasePath("/scenes/bedroom/bedroom.png");
 
 /**
  * Production collision rects (furniture + walls) — kept for future tuning.
