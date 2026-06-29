@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <script>
+      if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+        window.location.replace("/register");
+      }
+    </script>
+    <title>Memory Farm Bedroom Camera Demo</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="bedroom-demo.css" />
+  </head>
+  <body>
+    <main class="demo-page" aria-label="Memory Farm bedroom camera demo">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Bedroom Camera Prototype</p>
+          <h1>Memory Farm</h1>
+        </div>
+        <div class="status">
+          <span id="questReadout">Quest: อ่านจดหมายบนโต๊ะข้างเตียง</span>
+          <span id="positionReadout">x: 0 y: 0</span>
+          <span id="controlReadout">Detecting input...</span>
+        </div>
+      </header>
+
+      <section class="play-panel">
+        <div class="play-frame" id="playFrame">
+          <div class="world" id="world">
+            <img
+              class="bedroom-map"
+              id="bedroomMap"
+              src="https://d8j0ntlcm91z4.cloudfront.net/user_3EX64v0MwwRZPobOdtptsAMM5pN/hf_20260627_133146_adbd3060-6e39-4c6b-a9fb-0582d4ecf415.png"
+              alt="large pixel art bedroom map"
+              draggable="false"
+            />
+            <button class="hotspot hotspot-letter" data-hotspot="letter" type="button">จดหมาย</button>
+            <button class="hotspot hotspot-photo" data-hotspot="photo" type="button">Memory</button>
+            <button class="hotspot hotspot-door" data-hotspot="door" type="button">ประตู</button>
+            <div class="player" id="player" aria-label="player character"></div>
+          </div>
+
+          <div class="hud-chip" id="hintChip">WASD / Arrow เพื่อเดิน, E เพื่อสำรวจ</div>
+          <div class="input-chip" id="nearbyChip">เดินไปใกล้จุดที่มีแสง</div>
+
+          <div class="touch-ui joystick" id="joystick" aria-hidden="true">
+            <div class="joystick-stick" id="joystickStick"></div>
+          </div>
+          <button class="touch-ui touch-interact" id="touchInteract" type="button">INTERACT</button>
+        </div>
+
+        <aside class="side-panel">
+          <h2>Bedroom Goals</h2>
+          <ol id="goalList">
+            <li class="active">อ่านจดหมายจากคนที่รออยู่</li>
+            <li>ตามหา Memory Fragment 1 จากกรอบรูปเบลอ</li>
+            <li>ออกจากประตูไปยังโลกหลัก</li>
+          </ol>
+          <p class="note">
+            เดโม่นี้ทดสอบไอเดียภาพใหญ่ภาพเดียว แล้วให้กล้อง crop ตามตัวละครก่อน ยังไม่ใช่ collision สุดท้ายของเกมจริง
+          </p>
+        </aside>
+      </section>
+    </main>
+
+    <div class="modal-backdrop hidden" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <article class="modal-card">
+        <button class="modal-close" id="modalClose" type="button" aria-label="close">x</button>
+        <h2 id="modalTitle">Memory</h2>
+        <div id="modalBody"></div>
+      </article>
+    </div>
+
+    <script src="bedroom-demo.js"></script>
+  </body>
+</html>

@@ -1,0 +1,192 @@
+/* Hero sprite — ported from bedroom-walk-demo.css */
+
+.hero {
+  position: absolute;
+  z-index: 5;
+  width: 112px;
+  height: 172px;
+  transform-origin: 50% 88%;
+  image-rendering: pixelated;
+}
+
+.heroShadow {
+  position: absolute;
+  left: 20px;
+  bottom: 2px;
+  width: 72px;
+  height: 16px;
+  background: rgba(34, 21, 17, 0.36);
+  border-radius: 999px;
+}
+
+.heroSprite,
+.heroLeg {
+  position: absolute;
+  image-rendering: pixelated;
+}
+
+.heroSprite {
+  z-index: 3;
+  left: 0;
+  top: 0;
+  width: 112px;
+  height: 138px;
+  background-image: url("/prototypes/hero-front-body.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center bottom;
+  transform-origin: 50% 100%;
+}
+
+.hero[data-facing="down"] .heroSprite {
+  height: 152px;
+}
+
+.hero[data-facing="up"] .heroSprite {
+  background-image: url("/prototypes/hero-back-body.png");
+  top: 0;
+  height: 120px;
+}
+
+.hero[data-facing="up"] .heroLeg {
+  top: 118px;
+  width: 14px;
+  height: 47px;
+  background: linear-gradient(#f0bb91 0 20%, #e8a880 20% 36%, #5d3b24 36% 58%, #4a3020 58% 80%, #3b2a22 80% 100%);
+}
+
+.hero[data-facing="up"] .heroLegLeft {
+  left: 38px;
+}
+
+.hero[data-facing="up"] .heroLegRight {
+  right: 38px;
+}
+
+.hero[data-facing="up"][data-leg="left"] .heroLegLeft {
+  top: 115px;
+  height: 51px;
+  transform: translateY(-2px);
+}
+
+.hero[data-facing="up"][data-leg="left"] .heroLegRight {
+  top: 123px;
+  height: 40px;
+  transform: translateY(3px);
+}
+
+.hero[data-facing="up"][data-leg="right"] .heroLegLeft {
+  top: 123px;
+  height: 40px;
+  transform: translateY(3px);
+}
+
+.hero[data-facing="up"][data-leg="right"] .heroLegRight {
+  top: 115px;
+  height: 51px;
+  transform: translateY(-2px);
+}
+
+.hero[data-facing="right"] .heroSprite {
+  background-image: url("/prototypes/hero-side-body.png");
+}
+
+.hero[data-facing="left"] .heroSprite {
+  background-image: url("/prototypes/hero-side-body.png");
+  transform: scaleX(-1);
+}
+
+.heroLeg {
+  z-index: 2;
+  top: 128px;
+  width: 14px;
+  height: 34px;
+  background: linear-gradient(#f0bb91 0 35%, #5d3b24 35% 72%, #3b2a22 72% 100%);
+  transform-origin: 50% 0;
+  transition: transform 90ms steps(2, end), height 90ms steps(2, end), top 90ms steps(2, end);
+}
+
+.heroLegLeft {
+  left: 41px;
+}
+
+.heroLegRight {
+  right: 41px;
+}
+
+.hero[data-leg="left"] .heroLegLeft {
+  top: 126px;
+  height: 38px;
+  transform: translateY(-2px);
+}
+
+.hero[data-leg="left"] .heroLegRight {
+  top: 134px;
+  height: 27px;
+  transform: translateY(3px);
+}
+
+.hero[data-leg="right"] .heroLegLeft {
+  top: 134px;
+  height: 27px;
+  transform: translateY(3px);
+}
+
+.hero[data-leg="right"] .heroLegRight {
+  top: 126px;
+  height: 38px;
+  transform: translateY(-2px);
+}
+
+.hero[data-facing="down"] .heroLeg {
+  top: 148px;
+  width: 14px;
+  height: 44px;
+  background: linear-gradient(#f0bb91 0 22%, #e8a880 22% 38%, #5d3b24 38% 60%, #4a3020 60% 82%, #3b2a22 82% 100%);
+}
+
+.hero[data-facing="down"] .heroLegLeft {
+  left: 39px;
+}
+
+.hero[data-facing="down"] .heroLegRight {
+  right: 39px;
+}
+
+.hero[data-facing="down"][data-leg="left"] .heroLegLeft {
+  top: 145px;
+  height: 48px;
+  transform: translateY(-2px);
+}
+
+.hero[data-facing="down"][data-leg="left"] .heroLegRight {
+  top: 153px;
+  height: 36px;
+  transform: translateY(3px);
+}
+
+.hero[data-facing="down"][data-leg="right"] .heroLegLeft {
+  top: 153px;
+  height: 36px;
+  transform: translateY(3px);
+}
+
+.hero[data-facing="down"][data-leg="right"] .heroLegRight {
+  top: 145px;
+  height: 48px;
+  transform: translateY(-2px);
+}
+
+.walking {
+  animation: heroBob 0.34s steps(2, end) infinite;
+}
+
+@keyframes heroBob {
+  0%,
+  100% {
+    margin-top: 0;
+  }
+  50% {
+    margin-top: -3px;
+  }
+}

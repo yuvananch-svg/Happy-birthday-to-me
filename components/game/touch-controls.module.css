@@ -1,0 +1,73 @@
+:global(body.input-keyboard) .joystick,
+:global(body.input-keyboard) .interact {
+  display: none;
+}
+
+:global(body.input-touch) .joystick,
+:global(body.input-touch) .interact {
+  display: block;
+}
+
+.joystick {
+  position: absolute;
+  z-index: 9;
+  left: clamp(12px, 2.5vw, 30px);
+  bottom: clamp(12px, 2.5vh, 30px);
+  width: clamp(96px, 16vw, 124px);
+  height: clamp(96px, 16vw, 124px);
+  border: 4px solid var(--line-soft);
+  background: rgba(245, 234, 214, 0.72);
+  box-shadow:
+    inset 0 0 0 3px rgba(122, 82, 48, 0.12),
+    4px 4px 0 var(--accent-shadow);
+  border-radius: 999px;
+  touch-action: none;
+}
+
+.stick {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(40px, 7vw, 48px);
+  height: clamp(40px, 7vw, 48px);
+  border: 3px solid var(--line);
+  background: linear-gradient(180deg, #ef7894 0%, #d46480 100%);
+  box-shadow: 3px 3px 0 var(--accent-shadow);
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+}
+
+.interact {
+  position: absolute;
+  z-index: 9;
+  right: clamp(12px, 2.8vw, 34px);
+  bottom: clamp(16px, 3vh, 42px);
+  min-width: clamp(108px, 18vw, 128px);
+  min-height: clamp(48px, 8vh, 54px);
+  padding: 8px 12px;
+  border: 3px solid var(--line);
+  background: linear-gradient(180deg, #d4844f 0%, var(--accent) 58%, #9a4a2b 100%);
+  color: #fff8ed;
+  font-weight: 700;
+  font-size: clamp(13px, 2vw, 16px);
+  box-shadow: 4px 4px 0 var(--accent-shadow);
+  cursor: pointer;
+  text-shadow: 0 1px 0 rgba(61, 41, 20, 0.35);
+}
+
+.interact:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--accent-shadow);
+}
+
+@media (max-width: 900px) {
+  .joystick {
+    left: clamp(10px, 3vw, 20px);
+    bottom: clamp(10px, 2vh, 20px);
+  }
+
+  .interact {
+    right: clamp(10px, 3vw, 20px);
+    bottom: clamp(12px, 2.5vh, 24px);
+  }
+}

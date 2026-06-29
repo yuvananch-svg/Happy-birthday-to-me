@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { hasAccessCookie } from "@/lib/auth/access-cookie";
+import { hasAccessCookie } from "@/lib/auth/has-access-cookie";
 import { GameClient } from "./GameClient";
 
 export default async function GamePage() {

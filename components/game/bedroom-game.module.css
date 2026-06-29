@@ -1,0 +1,110 @@
+/* Bedroom game — ported from bedroom-walk-demo.css */
+
+.playFrame {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  background: #141515;
+  touch-action: none;
+  border: 4px solid var(--line);
+  box-shadow:
+    0 0 0 2px var(--line-soft),
+    5px 5px 0 var(--accent-shadow),
+    0 14px 36px rgba(45, 28, 14, 0.28);
+}
+
+.world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3840px;
+  height: 2160px;
+  transform: translate3d(0, 0, 0);
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.bedroomMap {
+  position: absolute;
+  inset: 0;
+  width: 3840px;
+  height: 2160px;
+  object-fit: cover;
+  image-rendering: pixelated;
+  user-select: none;
+  pointer-events: none;
+}
+
+.playFrame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 3px rgba(196, 168, 130, 0.45),
+    inset 0 0 90px rgba(45, 28, 14, 0.22);
+  z-index: 6;
+}
+
+.hotspot {
+  position: absolute;
+  z-index: 2;
+  width: 112px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255, 236, 200, 0.92);
+  background: rgba(212, 132, 79, 0.28);
+  color: #fff8ed;
+  text-shadow: 1px 1px 0 rgba(61, 41, 20, 0.65);
+  image-rendering: pixelated;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  animation: shimmer 1.1s steps(2, end) infinite;
+  font: inherit;
+  font-weight: 600;
+}
+
+.hotspot::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border: 2px solid rgba(255, 211, 110, 0.55);
+  opacity: 0.72;
+}
+
+.hotspotDone {
+  opacity: 0.4;
+  animation: none;
+}
+
+.hotspotHidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.basinProp {
+  position: absolute;
+  z-index: 3;
+  width: 36px;
+  height: 24px;
+  border-radius: 50% 50% 40% 40%;
+  background: #65d3de;
+  border: 2px solid var(--line);
+  transform: translate(-50%, -50%) rotate(12deg);
+  opacity: 0.85;
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 211, 110, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 211, 110, 0.24);
+  }
+}

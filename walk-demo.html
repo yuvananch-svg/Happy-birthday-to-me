@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <script>
+      if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+        window.location.replace("/register");
+      }
+    </script>
+    <title>Memory Farm Walk Demo</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="walk-demo.css" />
+  </head>
+  <body>
+    <main class="game-page" aria-label="Memory Farm walk demo">
+      <header class="topbar">
+        <div>
+          <p>Walk Prototype</p>
+          <h1>Memory Farm</h1>
+        </div>
+        <div class="status">
+          <span id="positionReadout">x: 0 y: 0</span>
+          <span id="controlReadout">Detecting input...</span>
+        </div>
+      </header>
+
+      <section class="play-shell">
+        <canvas id="gameCanvas" width="960" height="540" aria-label="walkable farm map"></canvas>
+        <div class="hint">
+          เดินทดสอบแมพอย่างเดียวก่อน: บ้าน ฟาร์ม น้ำ ป่า ทางขึ้นดอย และ collision พื้นฐาน
+        </div>
+        <div class="joystick" id="joystick" aria-hidden="true">
+          <div class="joystick-stick" id="joystickStick"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="walk-demo.js"></script>
+  </body>
+</html>

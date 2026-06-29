@@ -4,21 +4,9 @@ type DialogueBoxProps = {
   speaker: string;
   chapter: string;
   text: string;
-  lineNumber: number;
-  lineTotal: number;
-  isTyping: boolean;
-  onPass: () => void;
 };
 
-export function DialogueBox({
-  speaker,
-  chapter,
-  text,
-  lineNumber,
-  lineTotal,
-  isTyping,
-  onPass
-}: DialogueBoxProps) {
+export function DialogueBox({ speaker, chapter, text }: DialogueBoxProps) {
   return (
     <section className={styles.dialoguePanel} aria-live="polite">
       <div className={styles.speakerRow}>
@@ -29,14 +17,6 @@ export function DialogueBox({
         </div>
       </div>
       <p className={styles.dialogue}>{text}</p>
-      <div className={styles.passRow}>
-        <button className={styles.passButton} type="button" onClick={onPass}>
-          {isTyping ? "SKIP" : "PASS"}
-        </button>
-        <span>
-          ประโยค {lineNumber}/{lineTotal} - กด PASS หรือ Space
-        </span>
-      </div>
     </section>
   );
 }

@@ -56,7 +56,7 @@ export function createInitialGameState(): GameState {
     choicesVisible: false,
     currentPointKey: "start",
     route: ["start"],
-    journal: [{ id: "initial", text: "เริ่มที่เมืองความทรงจำ" }],
+    journal: [{ id: "initial", text: "การมาถึงของปีศาจหมู" }],
     badges: [],
     activeMedia: mediaForLine(node.id, 0)
   };

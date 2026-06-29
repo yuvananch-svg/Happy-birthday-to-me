@@ -7,8 +7,8 @@ type JournalLogProps = {
 
 export function JournalLog({ entries }: JournalLogProps) {
   return (
-    <aside className={styles.journal} aria-label="story journal">
-      <h2>Journey Log</h2>
+    <aside className={styles.journal} aria-label="quest log">
+      <h2>Quest</h2>
       <ol>
         {entries.map((entry) => (
           <li key={entry.id}>{entry.text}</li>

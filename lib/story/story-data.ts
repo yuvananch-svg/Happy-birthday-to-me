@@ -5,11 +5,11 @@ export const initialNodeId: StoryNodeId = "start";
 export const storyNodes: Record<StoryNodeId, StoryNode> = {
   start: {
     id: "start",
-    speaker: "Pixel Guide",
-    chapter: "เมืองความทรงจำ",
+    speaker: "Perthyw",
+    chapter: "Thanyawee Thanawaritkiat",
     destination: "start",
     lines: [
-      { text: "ยินดีต้อนรับสู่เมืองความทรงจำ" },
+      { text: "ยินดีต้อนรับผู้กล้า... วันนี้โลกของเรากำลังเข้าสู่สงคราม" },
       { text: "วันนี้ไม่ใช่เควสต์ธรรมดา เพราะมีสองวันสำคัญซ้อนกันอยู่ใกล้ๆ" },
       { text: "วันที่ 9 กรกฎาคมคือครบรอบ 2 ปี 5 เดือน และวันที่ 12 กรกฎาคมคือวันเกิดของเธอ" },
       { text: "ก่อนออกเดินทาง เลือกเส้นทางแรกที่อยากเปิดอ่าน" }
@@ -22,7 +22,7 @@ export const storyNodes: Record<StoryNodeId, StoryNode> = {
   },
   anniversary: {
     id: "anniversary",
-    speaker: "Pixel Guide",
+    speaker: "Perthyw",
     chapter: "เส้นทาง 9 กรกฎาคม",
     destination: "anniversary",
     lines: [
@@ -113,7 +113,7 @@ export const storyNodes: Record<StoryNodeId, StoryNode> = {
   },
   funnyMemory: {
     id: "funnyMemory",
-    speaker: "Pixel Guide",
+    speaker: "Perthyw",
     chapter: "ฉากหัวเราะ",
     destination: "anniversaryJunction",
     lines: [
@@ -141,7 +141,7 @@ export const storyNodes: Record<StoryNodeId, StoryNode> = {
   },
   hardSeason: {
     id: "hardSeason",
-    speaker: "Pixel Guide",
+    speaker: "Perthyw",
     chapter: "ฉากที่ไม่ง่าย",
     destination: "start",
     lines: [
@@ -288,7 +288,7 @@ export const storyNodes: Record<StoryNodeId, StoryNode> = {
   },
   finalGate: {
     id: "finalGate",
-    speaker: "Pixel Guide",
+    speaker: "Perthyw",
     chapter: "สะพานสองวันสำคัญ",
     destination: "finalGate",
     lines: [
@@ -332,7 +332,7 @@ export const storyNodes: Record<StoryNodeId, StoryNode> = {
   },
   playfulEnding: {
     id: "playfulEnding",
-    speaker: "Pixel Guide",
+    speaker: "Perthyw",
     chapter: "Ending",
     destination: "finalGate",
     lines: [

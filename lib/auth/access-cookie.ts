@@ -1,8 +1,7 @@
 import { createHmac, timingSafeEqual } from "crypto";
-import { cookies } from "next/headers";
+import { ACCESS_COOKIE_NAME, ACCESS_COOKIE_PAYLOAD } from "@/lib/auth/constants";
 
-export const ACCESS_COOKIE_NAME = "anniversary_access";
-const ACCESS_COOKIE_PAYLOAD = "anniversary-quest-access";
+export { ACCESS_COOKIE_NAME } from "@/lib/auth/constants";
 
 function getSecret(): string {
   const secret = process.env.ANNIVERSARY_COOKIE_SECRET;
@@ -10,6 +9,14 @@ function getSecret(): string {
     throw new Error("ANNIVERSARY_COOKIE_SECRET is required");
   }
   return secret;
+}
+
+export function isAccessCookieValid(
+  value: string | undefined,
+  secret: string | null | undefined
+): boolean {
+  if (!secret) return false;
+  return verifyAccessValue(value, secret);
 }
 
 export function signAccessValue(secret: string): string {
@@ -34,10 +41,4 @@ export function verifyAccessValue(value: string | undefined, secret: string): bo
 
 export function buildAccessCookieValue(): string {
   return signAccessValue(getSecret());
-}
-
-export async function hasAccessCookie(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const value = cookieStore.get(ACCESS_COOKIE_NAME)?.value;
-  return verifyAccessValue(value, getSecret());
 }

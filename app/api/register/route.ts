@@ -10,6 +10,10 @@ function normalize(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function matchesAllowed(input: string, allowed: string): boolean {
+  return input.localeCompare(allowed, undefined, { sensitivity: "accent" }) === 0;
+}
+
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => ({}))) as RegisterBody;
   const name = normalize(body.name);
@@ -24,7 +28,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (name !== allowedName || code !== allowedCode) {
+  if (!matchesAllowed(name, allowedName) || !matchesAllowed(code, allowedCode)) {
     return NextResponse.json(
       { ok: false, message: "ยังไม่ใช่กุญแจของเรื่องนี้ ลองอีกครั้งนะ" },
       { status: 401 }

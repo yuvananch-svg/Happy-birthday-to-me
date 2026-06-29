@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <script>
+      if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+        window.location.replace("/register");
+      }
+    </script>
+    <title>Memory Farm Opening Demo</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="opening-demo.css" />
+  </head>
+  <body>
+    <main class="opening-page" aria-label="Memory Farm opening demo">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Opening Prototype</p>
+          <h1>Happy anniversary and birthday</h1>
+        </div>
+        <div class="header-status">
+          <span id="fragmentCount">Memory 0/12</span>
+          <span id="controlMode">Detecting input...</span>
+        </div>
+      </header>
+
+      <section class="game-grid">
+        <div class="play-frame">
+          <canvas id="gameCanvas" width="960" height="540" aria-label="opening bedroom scene"></canvas>
+          <div class="interaction-chip" id="interactionChip">PASS เพื่ออ่านต่อ</div>
+          <div class="touch-ui joystick" id="joystick" aria-hidden="true">
+            <div class="joystick-stick" id="joystickStick"></div>
+          </div>
+          <button class="touch-ui touch-interact" id="touchInteract" type="button">INTERACT</button>
+        </div>
+
+        <aside class="quest-panel" aria-label="memory timeline">
+          <h2>Memory Quest</h2>
+          <div class="quest-block">
+            <p class="quest-label">Current</p>
+            <p id="currentQuest">ตื่นขึ้นมาในห้องที่ไม่คุ้นเคย</p>
+          </div>
+          <div class="quest-block">
+            <p class="quest-label">Next teaser</p>
+            <ol id="nextQuestList">
+              <li>สวนผักผลไม้บนดอย</li>
+              <li>บ่อน้ำกับร้านก๋วยเตี๋ยว</li>
+            </ol>
+          </div>
+          <div class="quest-block">
+            <p class="quest-label">Completed</p>
+            <ul id="completedList">
+              <li class="empty">ยังไม่มี memory ที่ปลดล็อก</li>
+            </ul>
+          </div>
+        </aside>
+      </section>
+
+      <section class="dialogue-panel" aria-live="polite">
+        <div class="portrait" id="speakerPortrait" aria-hidden="true"></div>
+        <div class="dialogue-copy">
+          <div class="speaker-row">
+            <strong id="speakerName">Perthyw</strong>
+            <span id="speakerMeta">Thanyawee Thanawaritkiat</span>
+          </div>
+          <p id="dialogueText">กด PASS เพื่อเริ่มฉากเปิด</p>
+        </div>
+        <button id="passButton" type="button">PASS</button>
+      </section>
+    </main>
+
+    <div class="modal-backdrop hidden" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <article class="modal-card">
+        <button class="modal-close" id="modalClose" type="button" aria-label="close">x</button>
+        <h2 id="modalTitle">จดหมาย</h2>
+        <div id="modalBody"></div>
+      </article>
+    </div>
+
+    <script src="opening-demo.js"></script>
+  </body>
+</html>

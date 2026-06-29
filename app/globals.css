@@ -1,15 +1,26 @@
 :root {
-  --ink: #15151a;
-  --paper: #f4f0e8;
-  --panel: #fff9ef;
-  --line: #2e2b2f;
-  --accent: #d94f70;
-  --accent-dark: #8f2f48;
-  --green: #83b96f;
-  --green-dark: #4d7b4c;
-  --path: #d8b96f;
-  --sky: #9fd4d8;
-  --shadow: rgba(21, 21, 26, 0.22);
+  /* Cozy farm UI palette (game shell + shared tokens) */
+  --ink: #3d2914;
+  --ink-muted: #6b5344;
+  --paper: #fff8ed;
+  --panel: rgba(245, 234, 214, 0.96);
+  --line: #7a5230;
+  --line-soft: #c4a882;
+  --accent: #b85c38;
+  --accent-hover: #a04f2f;
+  --accent-shadow: #5c361f;
+  --accent-light: #d4844f;
+  --heading: #b85c38;
+  --heading-gold: #c4883a;
+  --replay: #8f5a32;
+  --replay-hover: #b85c38;
+
+  /* Legacy map tokens (warm-shifted for old components) */
+  --green: #4a6b4a;
+  --green-dark: #2d4a35;
+  --path: #6b5344;
+  --sky: #8eb4c4;
+  --shadow: rgba(61, 41, 20, 0.22);
 }
 
 * {
@@ -18,17 +29,21 @@
 
 html {
   min-height: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
   background:
-    linear-gradient(45deg, rgba(21, 21, 26, 0.04) 25%, transparent 25%) 0 0 / 16px 16px,
-    linear-gradient(-45deg, rgba(21, 21, 26, 0.035) 25%, transparent 25%) 0 0 / 16px 16px,
-    var(--paper);
+    radial-gradient(ellipse 120% 80% at 50% 0%, rgba(196, 168, 130, 0.18) 0%, transparent 55%),
+    linear-gradient(180deg, #2d1c0e 0%, #1a120a 100%);
 }
 
 body {
   min-height: 100dvh;
   margin: 0;
+  overflow-x: hidden;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
   color: var(--ink);
-  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-family: var(--font-mali), "Mali", "Segoe UI", sans-serif;
 }
 
 button,
@@ -36,15 +51,6 @@ input {
   font: inherit;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ink: #f6f1e8;
-    --paper: #18191f;
-    --panel: #24242c;
-    --line: #f6f1e8;
-    --accent: #f06c8a;
-    --accent-dark: #ff9ab0;
-    --sky: #517b89;
-    --shadow: rgba(0, 0, 0, 0.42);
-  }
+button {
+  touch-action: manipulation;
 }
