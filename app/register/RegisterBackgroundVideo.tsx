@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { withBasePath } from "@/lib/navigation";
 import styles from "./register.module.css";
 
-const LOGIN_BACKGROUND_VIDEO = "/videos/login-background.mp4";
+const LOGIN_BACKGROUND_VIDEO = withBasePath("/videos/login-background.mp4");
 
 export function RegisterBackgroundVideo() {
   const videoRef = useRef<HTMLVideoElement>(null);
