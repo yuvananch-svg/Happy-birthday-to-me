@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { clearClientAccess } from "@/lib/auth/client-access";
+import { isStaticExportMode } from "@/lib/auth/static-mode";
 import { BedroomScene } from "@/components/game/BedroomScene";
 import { FarmScene } from "@/components/game/FarmScene";
 import { CinematicIntroLayer } from "@/components/game/CinematicIntroLayer";
@@ -47,6 +50,7 @@ function getSceneWorldConfig(scene: "bedroom" | "farm") {
 }
 
 export function BedroomGameClient() {
+  const router = useRouter();
   const [state, dispatch] = useReducer(bedroomReducer, undefined, createInitialBedroomState);
   const frameRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef(state);
@@ -250,8 +254,14 @@ export function BedroomGameClient() {
 
     setIsLoggingOut(true);
     try {
+      if (isStaticExportMode()) {
+        clearClientAccess();
+        router.push("/register");
+        return;
+      }
+
       await fetch("/api/logout", { method: "POST" });
-      window.location.assign("/register");
+      router.push("/register");
     } catch {
       setIsLoggingOut(false);
     }

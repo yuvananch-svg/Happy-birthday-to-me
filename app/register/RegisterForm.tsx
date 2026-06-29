@@ -1,6 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  setClientAccessGranted,
+  validateClientCredentials
+} from "@/lib/auth/client-access";
+import { isStaticExportMode } from "@/lib/auth/static-mode";
 import styles from "./register.module.css";
 
 const WRONG_CREDENTIALS_FIRST =
@@ -13,6 +19,7 @@ function wrongCredentialsMessage(attempt: number): string {
 }
 
 export function RegisterForm() {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
@@ -23,6 +30,25 @@ export function RegisterForm() {
     event.preventDefault();
     setMessage("");
     setIsSubmitting(true);
+
+    if (isStaticExportMode()) {
+      const trimmedName = name.trim();
+      const trimmedCode = code.trim();
+
+      if (!validateClientCredentials(trimmedName, trimmedCode)) {
+        const nextAttempt = failedAttempts + 1;
+        setFailedAttempts(nextAttempt);
+        setMessage(wrongCredentialsMessage(nextAttempt));
+        setIsSubmitting(false);
+        return;
+      }
+
+      setFailedAttempts(0);
+      setClientAccessGranted();
+      router.push("/game");
+      setIsSubmitting(false);
+      return;
+    }
 
     const response = await fetch("/api/register", {
       method: "POST",
@@ -50,7 +76,7 @@ export function RegisterForm() {
     }
 
     setFailedAttempts(0);
-    window.location.assign("/game");
+    router.push("/game");
   }
 
   return (
