@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { clearClientAccess } from "@/lib/auth/client-access";
+import { registerPath } from "@/lib/auth/paths";
 import { isStaticExportMode } from "@/lib/auth/static-mode";
 import { BedroomScene } from "@/components/game/BedroomScene";
 import { FarmScene } from "@/components/game/FarmScene";
@@ -256,12 +257,12 @@ export function BedroomGameClient() {
     try {
       if (isStaticExportMode()) {
         clearClientAccess();
-        router.push("/register");
+        router.push(registerPath());
         return;
       }
 
       await fetch("/api/logout", { method: "POST" });
-      router.push("/register");
+      router.push(registerPath());
     } catch {
       setIsLoggingOut(false);
     }

@@ -1,28 +1,34 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { hasClientAccess } from "@/lib/auth/client-access";
+import { registerPath } from "@/lib/auth/paths";
 import { isStaticExportMode } from "@/lib/auth/static-mode";
 import { BedroomGameClient } from "./BedroomGameClient";
 
-export function GameClient() {
-  const router = useRouter();
-  const [authed, setAuthed] = useState(false);
+function redirectToRegister(): void {
+  window.location.replace(registerPath());
+}
 
-  useEffect(() => {
+export function GameClient() {
+  const [authed, setAuthed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return isStaticExportMode() && hasClientAccess();
+  });
+
+  useLayoutEffect(() => {
     let cancelled = false;
 
     async function verifyAccess() {
       if (isStaticExportMode()) {
-        if (cancelled) return;
-
         if (!hasClientAccess()) {
-          router.replace("/register");
+          redirectToRegister();
           return;
         }
 
-        setAuthed(true);
+        if (!cancelled) {
+          setAuthed(true);
+        }
         return;
       }
 
@@ -36,14 +42,14 @@ export function GameClient() {
         if (cancelled) return;
 
         if (!response.ok || !payload.ok) {
-          router.replace("/register");
+          redirectToRegister();
           return;
         }
 
         setAuthed(true);
       } catch {
         if (!cancelled) {
-          router.replace("/register");
+          redirectToRegister();
         }
       }
     }
@@ -53,7 +59,7 @@ export function GameClient() {
     return () => {
       cancelled = true;
     };
-  }, [router]);
+  }, []);
 
   if (!authed) {
     return null;
