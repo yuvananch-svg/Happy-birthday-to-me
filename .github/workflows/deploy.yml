@@ -21,8 +21,9 @@ jobs:
       STATIC_EXPORT: "true"
       NEXT_PUBLIC_STATIC_EXPORT: "true"
       NEXT_PUBLIC_BASE_PATH: /Happy-birthday-to-me
-      NEXT_PUBLIC_ANNIVERSARY_ALLOWED_NAME: ${{ secrets.ANNIVERSARY_ALLOWED_NAME }}
-      NEXT_PUBLIC_ANNIVERSARY_ALLOWED_CODE: ${{ secrets.ANNIVERSARY_ALLOWED_CODE }}
+      # Soft gate only — same values as .env.example; override via repo secrets if needed.
+      NEXT_PUBLIC_ANNIVERSARY_ALLOWED_NAME: ${{ secrets.ANNIVERSARY_ALLOWED_NAME || 'Perthyw' }}
+      NEXT_PUBLIC_ANNIVERSARY_ALLOWED_CODE: ${{ secrets.ANNIVERSARY_ALLOWED_CODE || 'happy birthday to me' }}
     steps:
       - uses: actions/checkout@v4
 
