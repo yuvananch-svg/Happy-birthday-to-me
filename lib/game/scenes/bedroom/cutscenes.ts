@@ -163,12 +163,6 @@ export const FARM_ENTRY_CUTSCENE: CutsceneLine[] = [
 
 export const CAT_BEDS_CUTSCENE: CutsceneLine[] = [
   {
-    speaker: "แม่",
-    meta: "Mother",
-    portrait: "mother",
-    text: "ลูกคงได้เห็นแล้วใช่มั้ย ว่าลูกเองก็เลี้ยงแมวด้วย"
-  },
-  {
     speaker: "Perthyw",
     meta: "Thanyawee Thanawaritkiat",
     portrait: "hero",
