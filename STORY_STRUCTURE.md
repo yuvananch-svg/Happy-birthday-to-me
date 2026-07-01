@@ -1,5 +1,8 @@
 # Anniversary Quest - Demo Structure
 
+> **Superseded:** โปรเจกต์ pivot ไป **Stardew-like Memory Farm** แล้ว — direction ปัจจุบันและตาราง 9 Memory Fragments อยู่ใน `AGENTS.md`  
+> ไฟล์นี้เก็บโครงเดโม visual novel / graph-map เดิมไว้เป็น reference เท่านั้น
+
 ## Concept
 
 เว็บเป็นเกมเล่าเรื่องแบบ retro pixel RPG ที่ให้แฟนคุณเดินผ่าน 3 เส้นทางหลัก แล้วรวมเข้าฉากสุดท้าย:

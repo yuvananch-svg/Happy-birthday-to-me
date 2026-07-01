@@ -1,5 +1,7 @@
 # Anniversary Quest Next.js Implementation Plan
 
+> **Superseded (2026-07-01):** แผนนี้เป็น visual-novel / graph-map prototype เดิม — direction ปัจจุบันคือ **Memory Farm** ใน `AGENTS.md` (9 fragments, free-walk continuous map)
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build the approved Next.js App Router version of Anniversary Quest with a server-side soft register gate, pixel RPG story game, graph-constrained map movement, journal, badges, and image/video memory reveals.

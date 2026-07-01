@@ -1,5 +1,7 @@
 # Memory Farm — Bedroom Production Plan (Milestone 1)
 
+> **Direction lock (2026-07-01):** 9 Memory Fragments, 8 outdoor scene areas + bedroom opening — ไม่มีศาลา/ตา/ยาย — ดู `AGENTS.md`
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]` / `- [ ]`) syntax for tracking.
 >
 > **Scope:** Milestone 1 = **ฉากห้องนอน opening** — **M1-core implement แล้ว** (เล่นได้ใน `/game`); กำลังอยู่ช่วง **M1-polish** (ฉาก opening, แม่ NPC, cinematic)
@@ -35,7 +37,7 @@
 3. ขอบเขตแคบพอที่จะ lock tech + UX (input, dialogue, popup, sidebar) ก่อนขยาย outdoor map
 4. Next.js production **pivot แล้ว** — `/game` ใช้ `BedroomGameClient` แทน visual novel เก่า (`lib/story/*` เก็บเป็น reference)
 
-**North star M1:** แฟนเล่นจบห้องนอนแล้วรู้สึกอบอุ่น, เข้าใจ quest 12 fragments, จำแม่ได้, และอยากเดินออกประตูต่อ
+**North star M1:** แฟนเล่นจบห้องนอนแล้วรู้สึกอบอุ่น, เข้าใจ quest 9 fragments, จำแม่ได้, และอยากเดินออกประตูต่อ
 
 ---
 
@@ -172,20 +174,20 @@
 
 - [x] Modal กลางจอ: letter (text), memory F1 (image)
 - [x] Sidebar ขวา: Current quest, Next 1–2 teaser, Completed replay
-- [x] Fragment counter `Memory X/12`
+- [x] Fragment counter `Memory X/9`
 - [x] กด completed item → เปิด popup ซ้ำ
 
 ### C.7 Explicitly OUT OF SCOPE for M1
 
 - Outdoor / farm continuous map
-- F2–F12 และแมว (ฟ่อน/ฟู)
+- F2–F9 และแมว (ฟ่อน/ฟู)
 - Scene transition ผ่านประตูไปแมพใหญ่
 - Day/night cycle
 - NPC อื่นนอกแม่
 - Save/load progress (optional localStorage ทีหลัง)
 - Phaser migration
 - Production deploy ขั้นสุดท้าย (ทำ skeleton ได้ แต่ไม่ block M1)
-- เนื้อหาส่วนตัวที่ผู้ใช้ยังไม่ confirm (F10–F11, ภาษาเหนือ)
+- เนื้อหาส่วนตัวที่ผู้ใช้ยังไม่ confirm (ภาษาเหนือ)
 - ~~รูป F1 จริง~~ — **locked** แล้ว (Higgsfield portrait)
 
 ### C.8 Acceptance Criteria (M1 Done)
@@ -211,11 +213,11 @@
 
 | ฟิลด์ | รายละเอียด |
 |---|---|
-| **Status** | Partial — AGENTS.md อัปเดต mother/F1 assets; ยังไม่มี `MEMORY_FRAGMENTS.md` |
-| **Bedroom M1** | **Partial** — F1 media locked; F10–F11 ยังไม่ lock |
-| **Subtasks** | สร้าง `MEMORY_FRAGMENTS.md`; Task 1.1 (F7, F10–F11); บันทึก canonical asset URLs |
-| **Dependencies** | ผู้ใช้ confirm F10–F11, F7 ศาลา |
-| **Acceptance criteria** | Fragment table ครบ 12; opening dialogue ใน TS |
+| **Status** | Partial — AGENTS.md ล็อก 9 fragments แล้ว (2026-07-01); ยังไม่มี `MEMORY_FRAGMENTS.md` |
+| **Bedroom M1** | **Partial** — F1 media locked |
+| **Subtasks** | สร้าง `MEMORY_FRAGMENTS.md`; บันทึก canonical asset URLs |
+| **Dependencies** | ผู้ใช้ confirm media ของ F2–F9 |
+| **Acceptance criteria** | Fragment table ครบ 9; opening dialogue ใน TS |
 | **บทบาท** | Story |
 
 ### 2. Next.js App Shell + Register Gate
@@ -307,7 +309,7 @@
 | **Status** | Not started |
 | **Bedroom M1** | **No** |
 | **Subtasks** | Defer; Golden Bridge + video |
-| **Dependencies** | F1–F12 complete, F10–F11 locked |
+| **Dependencies** | F1–F9 complete |
 | **Acceptance criteria** | — |
 | **บทบาท** | Story / Cinematic |
 
@@ -404,8 +406,8 @@ BedroomGameClient (client)
 | **M2 — Outdoor Hub Slice** | Transition ประตู → outdoor mini-map F2–F3 | Not started |
 | **M3 — Cat Arc Start** | F4 ฟ่อน, F5 ฟู | Demo only |
 | **M4 — Continuous Map v1** | Stitch zones, collision ทั้งแมพ | Not started |
-| **M5 — Mid-game Fragments** | F6–F9 | Not started |
-| **M6 — Full 12 + Final** | F10–F12, Golden Bridge, video | Not started |
+| **M5 — Mid-game Fragments** | F6–F8 | Not started |
+| **M6 — Final** | F9 Golden Bridge, video | Not started |
 | **M7 — Polish & Deploy** | Day/night, iPad perf, Netlify | Partial |
 
 ---
@@ -417,9 +419,7 @@ BedroomGameClient (client)
 | 3 | **รูปกรอบ F1 (แม่)** | ~~Soft block~~ | ✅ **Locked** — `mother-f1.png` + overlay |
 | 13 | **Mother NPC look** | ~~Partial~~ | ✅ **Locked** — full-body + portrait Higgsfield |
 | 12 | **ภาษาเหนือของแม่** | No | Draft กลางใน M1 |
-| 1 | F10–F11 | No M1 | ต้อง lock ก่อน M5 |
-| 2 | F7 ศาลา | No M1 | |
-| 4–11 | F2–F9, final video | No M1 | sidebar teaser พอ |
+| 4–9 | F2–F8, final video (F9) | No M1 | sidebar teaser พอ |
 
 **Blockers ทางเทคนิค (อัปเดต):**
 
@@ -442,7 +442,7 @@ BedroomGameClient (client)
 3. - [ ] **Retune collision** — walk ทั่วห้อง; แก้ rects ใน `collision.ts`
 4. - [ ] **Mother cutscene visual** — sprite walk-in จาก `mother-fullbody-nobg-v3` หรือ wire `mother-basin-entry-v2.mp4` ก่อน dialogue
 5. - [ ] **Compress assets** — WebP สำหรับ bedroom + hero-sleeping scene
-6. - [ ] **Task 1.1 Story Bible** — lock F7, F10–F11; สร้าง `MEMORY_FRAGMENTS.md`
+6. - [ ] **Task 1.1 Story Bible** — สร้าง `MEMORY_FRAGMENTS.md` จากตาราง 9 fragments ใน AGENTS.md
 7. - [ ] **Manual QA** — desktop + iPad; บันทึก bbox/collision gaps
 8. - [ ] **M2 prep** — วางแผน outdoor transition จากประตู (port `opening-demo` outdoor)
 
