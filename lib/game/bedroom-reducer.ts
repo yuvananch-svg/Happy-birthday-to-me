@@ -291,34 +291,12 @@ export function bedroomReducer(state: BedroomGameState, action: BedroomAction): 
       return enterFarm(state);
 
     case "WARP_FARM_ZONE": {
-      const rejected =
+      if (
         state.currentScene !== "farm" ||
         state.mode !== "explore" ||
         state.modal ||
-        state.farmZone === action.zone;
-      // #region agent log
-      if (typeof fetch !== "undefined") {
-        fetch("http://127.0.0.1:7414/ingest/959fc233-75c7-4f41-a3a8-f8934f9d1a24", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "8c4c68" },
-          body: JSON.stringify({
-            sessionId: "8c4c68",
-            runId: "pre-fix",
-            hypothesisId: "D-E",
-            location: "bedroom-reducer.ts:WARP_FARM_ZONE",
-            message: rejected ? "warp rejected" : "warp applied",
-            data: {
-              rejected,
-              fromZone: state.farmZone,
-              toZone: action.zone,
-              playerX: state.player.x
-            },
-            timestamp: Date.now()
-          })
-        }).catch(() => {});
-      }
-      // #endregion
-      if (rejected) {
+        state.farmZone === action.zone
+      ) {
         return state;
       }
 

@@ -34,7 +34,6 @@ import {
   FARM_WORLD_ZOOM
 } from "@/lib/game/scenes/farm/collision";
 import {
-  FARM_OUTDOOR_EAST_EXIT_X,
   isPlayerAtFarmLeftEdge,
   isPlayerAtFarmRightEdge,
   isPlayerPressingFarmEastEdge
@@ -189,7 +188,6 @@ export function BedroomGameClient() {
   useEffect(() => {
     let frameId = 0;
     let lastTimestamp = performance.now();
-    let lastEdgeLogAt = 0;
 
     function tick(timestamp: number) {
       const current = stateRef.current;
@@ -234,59 +232,9 @@ export function BedroomGameClient() {
           current.farmZone === "pond-east" &&
           isPlayerAtFarmLeftEdge(nextPlayer, world);
 
-        // #region agent log
-        if (
-          current.currentScene === "farm" &&
-          current.farmZone === "outdoor" &&
-          nextPlayer.x > FARM_OUTDOOR_EAST_EXIT_X - 400 &&
-          timestamp - lastEdgeLogAt > 500
-        ) {
-          lastEdgeLogAt = timestamp;
-          const boundsRight = nextPlayer.x + nextPlayer.w / 2;
-          fetch("http://127.0.0.1:7414/ingest/959fc233-75c7-4f41-a3a8-f8934f9d1a24", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "8c4c68" },
-            body: JSON.stringify({
-              sessionId: "8c4c68",
-              runId: "pre-fix",
-              hypothesisId: "A-B",
-              location: "BedroomGameClient.tsx:tick",
-              message: "farm outdoor near east edge",
-              data: {
-                playerX: nextPlayer.x,
-                boundsRight,
-                exitX: FARM_OUTDOOR_EAST_EXIT_X,
-                worldW: world.w,
-                atRightEdge: atFarmRightEdge,
-                movementDx: movement.dx,
-                mode: current.mode,
-                modal: Boolean(current.modal),
-                farmZone: current.farmZone
-              },
-              timestamp: Date.now()
-            })
-          }).catch(() => {});
-        }
-        // #endregion
-
         if (playerInDoorZone) {
           dispatch({ type: "ENTER_FARM" });
         } else if (atFarmRightEdge) {
-          // #region agent log
-          fetch("http://127.0.0.1:7414/ingest/959fc233-75c7-4f41-a3a8-f8934f9d1a24", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "8c4c68" },
-            body: JSON.stringify({
-              sessionId: "8c4c68",
-              runId: "pre-fix",
-              hypothesisId: "D",
-              location: "BedroomGameClient.tsx:warp-dispatch",
-              message: "dispatching WARP_FARM_ZONE pond-east",
-              data: { playerX: nextPlayer.x },
-              timestamp: Date.now()
-            })
-          }).catch(() => {});
-          // #endregion
           dispatch({ type: "WARP_FARM_ZONE", zone: "pond-east" });
         } else if (atFarmLeftEdge) {
           dispatch({ type: "WARP_FARM_ZONE", zone: "outdoor" });
