@@ -99,6 +99,15 @@
   opacity: 0.85;
 }
 
+.noodleVendor {
+  position: absolute;
+  z-index: 4;
+  image-rendering: pixelated;
+  pointer-events: none;
+  transform-origin: 50% 100%;
+  user-select: none;
+}
+
 @keyframes shimmer {
   0%,
   100% {

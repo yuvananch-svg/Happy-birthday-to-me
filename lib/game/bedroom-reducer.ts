@@ -11,11 +11,18 @@ import {
 import type { IntroPhase } from "@/lib/game/scenes/bedroom/opening-video-beats";
 import { INTRO_BEATS } from "@/lib/game/scenes/bedroom/opening-video-beats";
 import type { BedroomInteractableId } from "@/lib/game/scenes/bedroom/interactables";
-import type { BedroomPhase } from "@/lib/game/quest/bedroom-quest";
+import type { QuestPhase } from "@/lib/game/quest/bedroom-quest";
+import { AFTER_GARDEN_CUTSCENE, AFTER_POND_NOODLE_CUTSCENE } from "@/lib/game/scenes/farm/cutscenes";
 import { unlockFragment } from "@/lib/game/quest/fragment-state";
-import { FARM_PLAYER_SPAWN, getFarmSpawnCamera } from "@/lib/game/scenes/farm/collision";
+import { FARM_DEFAULT_VIEWPORT, FARM_PLAYER_SPAWN, FARM_WORLD, getFarmSpawnCamera } from "@/lib/game/scenes/farm/collision";
+import {
+  getFarmOutdoorEnterFromEast,
+  getFarmPondEastEnterFromWest
+} from "@/lib/game/scenes/farm/edge-zones";
 
 export type GameScene = "bedroom" | "farm";
+
+export type FarmZone = "outdoor" | "pond-east";
 
 export type GameMode = "cutscene" | "explore";
 
@@ -26,17 +33,18 @@ export type ModalState =
 
 export type PendingAfterModal =
   | null
-  | { kind: "cutscene"; lines: CutsceneLine[]; nextPhase: BedroomPhase }
-  | { kind: "phase"; nextPhase: BedroomPhase };
+  | { kind: "cutscene"; lines: CutsceneLine[]; nextPhase: QuestPhase }
+  | { kind: "phase"; nextPhase: QuestPhase };
 
 export type BedroomGameState = {
   mode: GameMode;
-  phase: BedroomPhase;
+  phase: QuestPhase;
   currentScene: GameScene;
+  farmZone: FarmZone;
   introPhase: IntroPhase;
   cutsceneQueue: CutsceneLine[];
   cutsceneIndex: number;
-  pendingPhase: BedroomPhase | null;
+  pendingPhase: QuestPhase | null;
   dialogue: CutsceneLine | null;
   player: PlayerEntity;
   camera: Point;
@@ -53,7 +61,7 @@ export type BedroomGameState = {
 
 export type BedroomAction =
   | { type: "TICK_MOVEMENT"; player: PlayerEntity; camera: Point }
-  | { type: "START_CUTSCENE"; lines: CutsceneLine[]; nextPhase: BedroomPhase }
+  | { type: "START_CUTSCENE"; lines: CutsceneLine[]; nextPhase: QuestPhase }
   | { type: "PASS_DIALOGUE" }
   | { type: "INTRO_REACHED_HERO_PAUSE" }
   | { type: "INTRO_REACHED_MOTHER_PAUSE" }
@@ -62,7 +70,10 @@ export type BedroomAction =
   | { type: "OPEN_PHOTO" }
   | { type: "OPEN_DOOR" }
   | { type: "ENTER_FARM" }
+  | { type: "WARP_FARM_ZONE"; zone: FarmZone }
   | { type: "OPEN_CAT_BEDS" }
+  | { type: "OPEN_STRAWBERRY" }
+  | { type: "OPEN_NOODLE" }
   | { type: "CLOSE_MODAL" }
   | { type: "REPLAY_FRAGMENT"; fragmentId: number };
 
@@ -73,6 +84,8 @@ function applyCutsceneHook(state: BedroomGameState, hook?: CutsceneLine["hook"])
   if (hook === "mother-visible") return { ...state, motherVisible: true };
   if (hook === "basin-dropped") return { ...state, basinDropped: true };
   if (hook === "unlock-f1") return { ...state, fragments: unlockFragment(state.fragments, 1) };
+  if (hook === "unlock-f2") return { ...state, fragments: unlockFragment(state.fragments, 2) };
+  if (hook === "unlock-f3") return { ...state, fragments: unlockFragment(state.fragments, 3) };
   if (hook === "cat-beds-done") return { ...state, catBedsTalked: true };
 
   return state;
@@ -154,13 +167,14 @@ function enterFarm(state: BedroomGameState): BedroomGameState {
       ...state,
       doorInteracted: true,
       currentScene: "farm",
+      farmZone: "outdoor",
       player: { ...FARM_PLAYER_SPAWN },
       camera: getFarmSpawnCamera()
     },
     {
       type: "START_CUTSCENE",
       lines: FARM_ENTRY_CUTSCENE,
-      nextPhase: "farm-explore"
+      nextPhase: "garden-strawberry"
     }
   );
 }
@@ -186,6 +200,7 @@ export function createInitialBedroomState(): BedroomGameState {
     mode: "cutscene",
     phase: "intro",
     currentScene: "bedroom",
+    farmZone: "outdoor",
     introPhase: "silent",
     cutsceneQueue: INTRO_CUTSCENE,
     cutsceneIndex: 0,
@@ -275,6 +290,51 @@ export function bedroomReducer(state: BedroomGameState, action: BedroomAction): 
     case "ENTER_FARM":
       return enterFarm(state);
 
+    case "WARP_FARM_ZONE": {
+      const rejected =
+        state.currentScene !== "farm" ||
+        state.mode !== "explore" ||
+        state.modal ||
+        state.farmZone === action.zone;
+      // #region agent log
+      if (typeof fetch !== "undefined") {
+        fetch("http://127.0.0.1:7414/ingest/959fc233-75c7-4f41-a3a8-f8934f9d1a24", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "8c4c68" },
+          body: JSON.stringify({
+            sessionId: "8c4c68",
+            runId: "pre-fix",
+            hypothesisId: "D-E",
+            location: "bedroom-reducer.ts:WARP_FARM_ZONE",
+            message: rejected ? "warp rejected" : "warp applied",
+            data: {
+              rejected,
+              fromZone: state.farmZone,
+              toZone: action.zone,
+              playerX: state.player.x
+            },
+            timestamp: Date.now()
+          })
+        }).catch(() => {});
+      }
+      // #endregion
+      if (rejected) {
+        return state;
+      }
+
+      const nextPlayer =
+        action.zone === "pond-east"
+          ? getFarmPondEastEnterFromWest(state.player)
+          : getFarmOutdoorEnterFromEast(state.player);
+
+      return {
+        ...state,
+        farmZone: action.zone,
+        player: nextPlayer,
+        camera: getFarmSpawnCamera(FARM_DEFAULT_VIEWPORT, nextPlayer)
+      };
+    }
+
     case "OPEN_CAT_BEDS":
       if (state.catBedsTalked || state.modal || state.mode !== "explore" || state.phase === "intro") {
         return state;
@@ -284,6 +344,44 @@ export function bedroomReducer(state: BedroomGameState, action: BedroomAction): 
         lines: CAT_BEDS_CUTSCENE,
         nextPhase: state.phase
       });
+
+    case "OPEN_STRAWBERRY":
+      if (
+        state.currentScene !== "farm" ||
+        state.phase !== "garden-strawberry" ||
+        state.fragments.includes(2) ||
+        state.modal
+      ) {
+        return state;
+      }
+      return {
+        ...state,
+        modal: { type: "memory", fragmentId: 2 },
+        pendingAfterModal: {
+          kind: "cutscene",
+          lines: AFTER_GARDEN_CUTSCENE,
+          nextPhase: "pond-noodle"
+        }
+      };
+
+    case "OPEN_NOODLE":
+      if (
+        state.currentScene !== "farm" ||
+        state.phase !== "pond-noodle" ||
+        state.fragments.includes(3) ||
+        state.modal
+      ) {
+        return state;
+      }
+      return {
+        ...state,
+        modal: { type: "memory", fragmentId: 3 },
+        pendingAfterModal: {
+          kind: "cutscene",
+          lines: AFTER_POND_NOODLE_CUTSCENE,
+          nextPhase: "farm-explore"
+        }
+      };
 
     case "CLOSE_MODAL": {
       if (!state.modal) return state;
@@ -297,14 +395,6 @@ export function bedroomReducer(state: BedroomGameState, action: BedroomAction): 
       }
 
       if (pending.kind === "cutscene") {
-        if (state.modal.type === "memory" && state.modal.fragmentId === 1) {
-          return bedroomReducer(next, {
-            type: "START_CUTSCENE",
-            lines: pending.lines,
-            nextPhase: pending.nextPhase
-          });
-        }
-
         return bedroomReducer(next, {
           type: "START_CUTSCENE",
           lines: pending.lines,

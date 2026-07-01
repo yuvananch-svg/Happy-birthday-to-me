@@ -1,9 +1,19 @@
 import type { BedroomInteractableId } from "@/lib/game/scenes/bedroom/interactables";
 
-export type BedroomPhase = "intro" | "find-letter" | "find-photo" | "go-door" | "farm-explore";
+export type QuestPhase =
+  | "intro"
+  | "find-letter"
+  | "find-photo"
+  | "go-door"
+  | "garden-strawberry"
+  | "pond-noodle"
+  | "farm-explore";
 
-export function getActiveInteractableIds(
-  phase: BedroomPhase,
+/** @deprecated Use QuestPhase */
+export type BedroomPhase = QuestPhase;
+
+export function getActiveBedroomInteractableIds(
+  phase: QuestPhase,
   letterRead: boolean,
   fragments: number[],
   doorInteracted: boolean,
@@ -32,32 +42,55 @@ export function getActiveInteractableIds(
   return ids;
 }
 
-export function getCurrentQuestText(phase: BedroomPhase, letterRead: boolean, fragments: number[]) {
+/** @deprecated Use getActiveBedroomInteractableIds */
+export const getActiveInteractableIds = getActiveBedroomInteractableIds;
+
+export function getCurrentQuestText(phase: QuestPhase, letterRead: boolean, fragments: number[]) {
   if (phase === "intro") return "ตื่นขึ้นมาในห้องที่ไม่คุ้นเคย";
   if (phase === "find-letter" && !letterRead) return "สำรวจห้อง — ใช้ WASD / Arrow เดิน";
   if (phase === "find-photo" && !fragments.includes(1)) {
     return "สำรวจกรอบรูปเบลอในห้อง เพื่อจำแม่ให้ได้";
   }
   if (phase === "go-door") return "เดินไปที่ประตูด้านล่างเพื่อออกจากห้อง";
+  if (phase === "garden-strawberry" && !fragments.includes(2)) {
+    return "สำรวจสวนผักผลไม้ แล้วกดสตรอเบอร์พิเศษ";
+  }
+  if (phase === "pond-noodle" && !fragments.includes(3)) {
+    return "เดินไปทางบ่อน้ำและร้านก๋วยเตี๋ยว";
+  }
   if (phase === "farm-explore") return "สำรวจ Memory Farm — เดินหา Fragment ถัดไป";
   if (letterRead && fragments.includes(1)) return "สำรวจ Memory Farm";
   return "สำรวจ Memory Farm";
 }
 
-export function getNextQuestTeasers(phase: BedroomPhase): string[] {
+export function getNextQuestTeasers(phase: QuestPhase, fragments: number[]): string[] {
   if (phase === "intro" || phase === "find-letter" || phase === "find-photo") {
     return ["???", "???"];
   }
 
-  if (phase === "go-door" || phase === "farm-explore") {
+  if (phase === "go-door") {
     return ["สวนผักผลไม้บนดอย", "บ่อน้ำกับร้านก๋วยเตี๋ยว"];
+  }
+
+  if (phase === "garden-strawberry") {
+    return ["บ่อน้ำกับร้านก๋วยเตี๋ยว", "ตามหาฟ่อน"];
+  }
+
+  if (phase === "pond-noodle") {
+    return ["ตามหาฟ่อน", "???"];
+  }
+
+  if (phase === "farm-explore") {
+    if (!fragments.includes(2)) return ["สวนผักผลไม้บนดอย", "บ่อน้ำกับร้านก๋วยเตี๋ยว"];
+    if (!fragments.includes(3)) return ["บ่อน้ำกับร้านก๋ยเตี๋ยว", "ตามหาฟ่อน"];
+    return ["ตามหาฟ่อน", "???"];
   }
 
   return ["???", "???"];
 }
 
 export function getInteractionHint(options: {
-  phase: BedroomPhase;
+  phase: QuestPhase;
   mode: "cutscene" | "explore";
   modalOpen: boolean;
   nearestLabel: string | null;

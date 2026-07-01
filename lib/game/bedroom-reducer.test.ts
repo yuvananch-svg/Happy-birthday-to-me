@@ -10,13 +10,23 @@ import {
   INTRO_CUTSCENE
 } from "./scenes/bedroom/cutscenes";
 import { BEDROOM_PLAYER_DEFAULT } from "./scenes/bedroom/collision";
-import { FARM_PLAYER_SPAWN, getFarmSpawnCamera } from "./scenes/farm/collision";
+import { FARM_PLAYER_SPAWN, FARM_WORLD, getFarmSpawnCamera } from "./scenes/farm/collision";
+import {
+  FARM_EDGE_WARP_MARGIN,
+  FARM_OUTDOOR_EAST_EXIT_X,
+  getFarmOutdoorEnterFromEast,
+  getFarmPondEastEnterFromWest,
+  isPlayerAtFarmLeftEdge,
+  isPlayerAtFarmRightEdge,
+  isPlayerPressingFarmEastEdge
+} from "./scenes/farm/edge-zones";
 import { isPlayerInBedroomDoorExitZone } from "./scenes/bedroom/door-zone";
 import {
   getActiveInteractableIds,
   getCurrentQuestText,
   getNextQuestTeasers
 } from "./quest/bedroom-quest";
+import { getActiveFarmInteractableIds } from "./scenes/farm/interactables";
 
 describe("bedroom quest helpers", () => {
   it("gates interactables by phase", () => {
@@ -39,7 +49,19 @@ describe("bedroom quest helpers", () => {
 
   it("describes current quest and teasers", () => {
     expect(getCurrentQuestText("find-letter", false, [])).toContain("สำรวจห้อง");
-    expect(getNextQuestTeasers("go-door")).toEqual(["สวนผักผลไม้บนดอย", "บ่อน้ำกับร้านก๋วยเตี๋ยว"]);
+    expect(getNextQuestTeasers("go-door", [])).toEqual(["สวนผักผลไม้บนดอย", "บ่อน้ำกับร้านก๋วยเตี๋ยว"]);
+    expect(getNextQuestTeasers("garden-strawberry", [])).toEqual([
+      "บ่อน้ำกับร้านก๋วยเตี๋ยว",
+      "ตามหาฟ่อน"
+    ]);
+  });
+
+  it("gates farm interactables by phase and fragments", () => {
+    expect([...getActiveFarmInteractableIds("garden-strawberry", [1])]).toEqual(["strawberry"]);
+    expect([...getActiveFarmInteractableIds("garden-strawberry", [1, 2])]).toEqual([]);
+    expect([...getActiveFarmInteractableIds("pond-noodle", [1, 2])]).toEqual(["noodle-shop"]);
+    expect([...getActiveFarmInteractableIds("pond-noodle", [1, 2, 3])]).toEqual([]);
+    expect([...getActiveFarmInteractableIds("farm-explore", [1, 2, 3])]).toEqual([]);
   });
 });
 
@@ -309,6 +331,76 @@ describe("bedroom reducer", () => {
     state = finishCutscene(state);
 
     expect(state.mode).toBe("explore");
+    expect(state.phase).toBe("garden-strawberry");
+  });
+
+  it("unlocks F2 after strawberry memory and moves to pond-noodle phase", () => {
+    let state = reachFindLetter();
+
+    state = bedroomReducer(state, { type: "OPEN_LETTER" });
+    state = bedroomReducer(state, { type: "CLOSE_MODAL" });
+    state = finishCutscene(state);
+
+    state = bedroomReducer(state, { type: "OPEN_PHOTO" });
+    state = bedroomReducer(state, { type: "CLOSE_MODAL" });
+    state = finishCutscene(state);
+
+    state = bedroomReducer(state, { type: "ENTER_FARM" });
+    state = finishCutscene(state);
+
+    expect(state.phase).toBe("garden-strawberry");
+    expect(state.fragments).toEqual([1]);
+
+    state = bedroomReducer(state, { type: "OPEN_STRAWBERRY" });
+    expect(state.modal).toEqual({ type: "memory", fragmentId: 2 });
+
+    state = bedroomReducer(state, { type: "CLOSE_MODAL" });
+    expect(state.mode).toBe("cutscene");
+
+    while (state.mode === "cutscene" && !state.fragments.includes(2)) {
+      state = bedroomReducer(state, { type: "PASS_DIALOGUE" });
+    }
+
+    expect(state.fragments).toEqual([1, 2]);
+
+    state = finishCutscene(state);
+    expect(state.phase).toBe("pond-noodle");
+  });
+
+  it("unlocks F3 after noodle shop memory and moves to farm-explore phase", () => {
+    let state = reachFindLetter();
+
+    state = bedroomReducer(state, { type: "OPEN_LETTER" });
+    state = bedroomReducer(state, { type: "CLOSE_MODAL" });
+    state = finishCutscene(state);
+
+    state = bedroomReducer(state, { type: "OPEN_PHOTO" });
+    state = bedroomReducer(state, { type: "CLOSE_MODAL" });
+    state = finishCutscene(state);
+
+    state = bedroomReducer(state, { type: "ENTER_FARM" });
+    state = finishCutscene(state);
+
+    state = bedroomReducer(state, { type: "OPEN_STRAWBERRY" });
+    state = bedroomReducer(state, { type: "CLOSE_MODAL" });
+    state = finishCutscene(state);
+
+    expect(state.phase).toBe("pond-noodle");
+    expect(state.fragments).toEqual([1, 2]);
+
+    state = bedroomReducer(state, { type: "OPEN_NOODLE" });
+    expect(state.modal).toEqual({ type: "memory", fragmentId: 3 });
+
+    state = bedroomReducer(state, { type: "CLOSE_MODAL" });
+    expect(state.mode).toBe("cutscene");
+
+    while (state.mode === "cutscene" && !state.fragments.includes(3)) {
+      state = bedroomReducer(state, { type: "PASS_DIALOGUE" });
+    }
+
+    expect(state.fragments).toEqual([1, 2, 3]);
+
+    state = finishCutscene(state);
     expect(state.phase).toBe("farm-explore");
   });
 
@@ -337,5 +429,64 @@ describe("bedroom reducer", () => {
     );
 
     expect(state.currentScene).toBe("farm");
+  });
+
+  it("warps from outdoor right edge to pond-east and back via left edge", () => {
+    const farmExplore: BedroomGameState = {
+      ...createInitialBedroomState(),
+      mode: "explore",
+      phase: "farm-explore",
+      currentScene: "farm",
+      farmZone: "outdoor",
+      fragments: [1, 2, 3],
+      player: { ...FARM_PLAYER_SPAWN, x: FARM_OUTDOOR_EAST_EXIT_X, y: 1200 }
+    };
+
+    expect(isPlayerAtFarmRightEdge(farmExplore.player, FARM_WORLD)).toBe(true);
+
+    const pressingEast = isPlayerPressingFarmEastEdge(
+      { ...FARM_PLAYER_SPAWN, x: FARM_OUTDOOR_EAST_EXIT_X - 100, y: 1200 },
+      { ...FARM_PLAYER_SPAWN, x: FARM_OUTDOOR_EAST_EXIT_X - 100, y: 1200 },
+      { dx: 1, dy: 0 },
+      FARM_WORLD
+    );
+    expect(pressingEast).toBe(true);
+
+    const warpedEast = bedroomReducer(farmExplore, { type: "WARP_FARM_ZONE", zone: "pond-east" });
+
+    expect(warpedEast.farmZone).toBe("pond-east");
+    expect(warpedEast.player).toEqual(getFarmPondEastEnterFromWest(farmExplore.player));
+    expect(isPlayerAtFarmLeftEdge(warpedEast.player, FARM_WORLD)).toBe(false);
+
+    const atLeftEdge = {
+      ...warpedEast,
+      player: { ...warpedEast.player, x: FARM_EDGE_WARP_MARGIN }
+    };
+
+    expect(isPlayerAtFarmLeftEdge(atLeftEdge.player, FARM_WORLD)).toBe(true);
+
+    const warpedWest = bedroomReducer(atLeftEdge, { type: "WARP_FARM_ZONE", zone: "outdoor" });
+
+    expect(warpedWest.farmZone).toBe("outdoor");
+    expect(warpedWest.player).toEqual(
+      getFarmOutdoorEnterFromEast(atLeftEdge.player)
+    );
+    expect(isPlayerAtFarmRightEdge(warpedWest.player, FARM_WORLD)).toBe(false);
+  });
+
+  it("sets farmZone to outdoor when entering farm from bedroom", () => {
+    let state = reachFindLetter();
+
+    state = bedroomReducer(state, { type: "OPEN_LETTER" });
+    state = bedroomReducer(state, { type: "CLOSE_MODAL" });
+    state = finishCutscene(state);
+
+    state = bedroomReducer(state, { type: "OPEN_PHOTO" });
+    state = bedroomReducer(state, { type: "CLOSE_MODAL" });
+    state = finishCutscene(state);
+
+    state = bedroomReducer(state, { type: "ENTER_FARM" });
+
+    expect(state.farmZone).toBe("outdoor");
   });
 });

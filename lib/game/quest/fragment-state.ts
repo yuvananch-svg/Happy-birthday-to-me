@@ -3,10 +3,14 @@ export const FRAGMENT_NAMES: Record<number, string> = {
   2: "F2 สวนผักผลไม้บนดอย",
   3: "F3 ก๋วยเตี๋ยวริมบ่อน้ำ",
   4: "F4 ฟ่อนกับรูปแรกๆ",
-  5: "F5 ฟูกับของเล่น/อาหาร"
+  5: "F5 ฟูกับของเล่น/อาหาร",
+  6: "F6 แคมป์ road trip / เต็นท์",
+  7: "F7 เขื่อนหลังมหาวิทยาลัย",
+  8: "F8 ทุ่งดอกไม้",
+  9: "F9 Golden Bridge"
 };
 
-export const TOTAL_FRAGMENTS = 12;
+export const TOTAL_FRAGMENTS = 9;
 
 export function hasFragment(fragments: number[], id: number) {
   return fragments.includes(id);

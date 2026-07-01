@@ -13,10 +13,10 @@ import { GameModal } from "@/components/game/GameModal";
 import { QuestSidebar } from "@/components/game/QuestSidebar";
 import { TouchControls } from "@/components/game/TouchControls";
 import { applyMovementInput, cameraFollowPlayer, getNearestInteractable } from "@/lib/game/engine";
-import { bedroomReducer, createInitialBedroomState } from "@/lib/game/bedroom-reducer";
+import { bedroomReducer, createInitialBedroomState, type FarmZone } from "@/lib/game/bedroom-reducer";
 import { useGameInput } from "@/lib/game/input/useGameInput";
 import {
-  getActiveInteractableIds,
+  getActiveBedroomInteractableIds,
   getCurrentQuestText,
   getNextQuestTeasers
 } from "@/lib/game/quest/bedroom-quest";
@@ -29,15 +29,27 @@ import {
 import { BEDROOM_INTERACTABLES } from "@/lib/game/scenes/bedroom/interactables";
 import {
   FARM_FREE_WALK_COLLIDERS,
+  FARM_POND_EAST_WORLD,
   FARM_WORLD,
   FARM_WORLD_ZOOM
 } from "@/lib/game/scenes/farm/collision";
+import {
+  FARM_OUTDOOR_EAST_EXIT_X,
+  isPlayerAtFarmLeftEdge,
+  isPlayerAtFarmRightEdge,
+  isPlayerPressingFarmEastEdge
+} from "@/lib/game/scenes/farm/edge-zones";
+import {
+  FARM_INTERACTABLES,
+  getActiveFarmInteractableIds
+} from "@/lib/game/scenes/farm/interactables";
 import styles from "./game.module.css";
 
-function getSceneWorldConfig(scene: "bedroom" | "farm") {
+function getSceneWorldConfig(scene: "bedroom" | "farm", farmZone: FarmZone = "outdoor") {
   if (scene === "farm") {
+    const world = farmZone === "pond-east" ? FARM_POND_EAST_WORLD : FARM_WORLD;
     return {
-      world: FARM_WORLD,
+      world,
       worldZoom: FARM_WORLD_ZOOM,
       colliders: FARM_FREE_WALK_COLLIDERS
     };
@@ -104,14 +116,24 @@ export function BedroomGameClient() {
       return;
     }
 
-    const activeIds = getActiveInteractableIds(
+    const bedroomActiveIds = getActiveBedroomInteractableIds(
       current.phase,
       current.letterRead,
       current.fragments,
       current.doorInteracted,
       current.catBedsTalked
     );
-    const nearest = getNearestInteractable(current.player, BEDROOM_INTERACTABLES, activeIds);
+    const farmActiveIds = getActiveFarmInteractableIds(current.phase, current.fragments);
+
+    if (current.currentScene === "farm") {
+      if (current.farmZone !== "outdoor") return;
+      const nearest = getNearestInteractable(current.player, FARM_INTERACTABLES, farmActiveIds);
+      if (nearest?.id === "strawberry") dispatch({ type: "OPEN_STRAWBERRY" });
+      else if (nearest?.id === "noodle-shop") dispatch({ type: "OPEN_NOODLE" });
+      return;
+    }
+
+    const nearest = getNearestInteractable(current.player, BEDROOM_INTERACTABLES, bedroomActiveIds);
     if (nearest?.id === "letter") dispatch({ type: "OPEN_LETTER" });
     else if (nearest?.id === "photo") dispatch({ type: "OPEN_PHOTO" });
     else if (nearest?.id === "door") dispatch({ type: "ENTER_FARM" });
@@ -126,9 +148,9 @@ export function BedroomGameClient() {
     cutsceneMode: state.mode === "cutscene"
   });
 
-  const activeIds = useMemo(
+  const bedroomActiveIds = useMemo(
     () =>
-      getActiveInteractableIds(
+      getActiveBedroomInteractableIds(
         state.phase,
         state.letterRead,
         state.fragments,
@@ -137,6 +159,23 @@ export function BedroomGameClient() {
       ),
     [state.catBedsTalked, state.doorInteracted, state.fragments, state.letterRead, state.phase]
   );
+
+  const farmActiveIds = useMemo(
+    () => getActiveFarmInteractableIds(state.phase, state.fragments),
+    [state.fragments, state.phase]
+  );
+
+  const farmCompletedIds = useMemo(() => {
+    const ids = new Set<string>();
+    if (state.fragments.includes(2)) ids.add("strawberry");
+    if (state.fragments.includes(3)) ids.add("noodle-shop");
+    return ids;
+  }, [state.fragments]);
+
+  const showNoodleVendor =
+    isFarmScene &&
+    state.farmZone === "outdoor" &&
+    (state.phase === "pond-noodle" || state.phase === "farm-explore");
 
   const completedIds = useMemo(() => {
     const ids = new Set<string>();
@@ -150,6 +189,7 @@ export function BedroomGameClient() {
   useEffect(() => {
     let frameId = 0;
     let lastTimestamp = performance.now();
+    let lastEdgeLogAt = 0;
 
     function tick(timestamp: number) {
       const current = stateRef.current;
@@ -163,7 +203,10 @@ export function BedroomGameClient() {
           frame && frame.clientWidth > 0
             ? { w: frame.clientWidth, h: frame.clientHeight }
             : { w: 960, h: 540 };
-        const { world, worldZoom, colliders } = getSceneWorldConfig(current.currentScene);
+        const { world, worldZoom, colliders } = getSceneWorldConfig(
+          current.currentScene,
+          current.farmZone
+        );
         const nextPlayer = applyMovementInput(
           current.player,
           movement,
@@ -180,8 +223,73 @@ export function BedroomGameClient() {
           !current.doorInteracted &&
           isPlayerInBedroomDoorExitZone(nextPlayer);
 
+        const atFarmRightEdge =
+          current.currentScene === "farm" &&
+          current.farmZone === "outdoor" &&
+          (isPlayerAtFarmRightEdge(nextPlayer, world) ||
+            isPlayerPressingFarmEastEdge(current.player, nextPlayer, movement, world));
+
+        const atFarmLeftEdge =
+          current.currentScene === "farm" &&
+          current.farmZone === "pond-east" &&
+          isPlayerAtFarmLeftEdge(nextPlayer, world);
+
+        // #region agent log
+        if (
+          current.currentScene === "farm" &&
+          current.farmZone === "outdoor" &&
+          nextPlayer.x > FARM_OUTDOOR_EAST_EXIT_X - 400 &&
+          timestamp - lastEdgeLogAt > 500
+        ) {
+          lastEdgeLogAt = timestamp;
+          const boundsRight = nextPlayer.x + nextPlayer.w / 2;
+          fetch("http://127.0.0.1:7414/ingest/959fc233-75c7-4f41-a3a8-f8934f9d1a24", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "8c4c68" },
+            body: JSON.stringify({
+              sessionId: "8c4c68",
+              runId: "pre-fix",
+              hypothesisId: "A-B",
+              location: "BedroomGameClient.tsx:tick",
+              message: "farm outdoor near east edge",
+              data: {
+                playerX: nextPlayer.x,
+                boundsRight,
+                exitX: FARM_OUTDOOR_EAST_EXIT_X,
+                worldW: world.w,
+                atRightEdge: atFarmRightEdge,
+                movementDx: movement.dx,
+                mode: current.mode,
+                modal: Boolean(current.modal),
+                farmZone: current.farmZone
+              },
+              timestamp: Date.now()
+            })
+          }).catch(() => {});
+        }
+        // #endregion
+
         if (playerInDoorZone) {
           dispatch({ type: "ENTER_FARM" });
+        } else if (atFarmRightEdge) {
+          // #region agent log
+          fetch("http://127.0.0.1:7414/ingest/959fc233-75c7-4f41-a3a8-f8934f9d1a24", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "8c4c68" },
+            body: JSON.stringify({
+              sessionId: "8c4c68",
+              runId: "pre-fix",
+              hypothesisId: "D",
+              location: "BedroomGameClient.tsx:warp-dispatch",
+              message: "dispatching WARP_FARM_ZONE pond-east",
+              data: { playerX: nextPlayer.x },
+              timestamp: Date.now()
+            })
+          }).catch(() => {});
+          // #endregion
+          dispatch({ type: "WARP_FARM_ZONE", zone: "pond-east" });
+        } else if (atFarmLeftEdge) {
+          dispatch({ type: "WARP_FARM_ZONE", zone: "outdoor" });
         } else if (
             nextPlayer.x !== current.player.x ||
             nextPlayer.y !== current.player.y ||
@@ -210,7 +318,7 @@ export function BedroomGameClient() {
       if (!node) return;
 
       const current = stateRef.current;
-      const { world, worldZoom } = getSceneWorldConfig(current.currentScene);
+      const { world, worldZoom } = getSceneWorldConfig(current.currentScene, current.farmZone);
       const nextCamera = cameraFollowPlayer(
         current.player,
         { w: node.clientWidth, h: node.clientHeight },
@@ -243,7 +351,7 @@ export function BedroomGameClient() {
       cancelAnimationFrame(rafId);
       observer?.disconnect();
     };
-  }, [showGameScene, isFarmScene]);
+  }, [showGameScene, isFarmScene, state.farmZone]);
 
   useEffect(() => {
     if (state.introPhase !== "done") return;
@@ -294,14 +402,28 @@ export function BedroomGameClient() {
         <div className={styles.sceneColumn}>
           {showGameScene ? (
             isFarmScene ? (
-              <FarmScene frameRef={frameRef} player={state.player} camera={state.camera} />
+              <FarmScene
+                frameRef={frameRef}
+                player={state.player}
+                camera={state.camera}
+                farmZone={state.farmZone}
+                interactables={state.farmZone === "outdoor" ? FARM_INTERACTABLES : []}
+                activeIds={farmActiveIds}
+                completedIds={farmCompletedIds}
+                showNoodleVendor={showNoodleVendor}
+                onHotspotClick={(id) => {
+                  if (state.mode !== "explore" || state.modal) return;
+                  if (id === "strawberry") dispatch({ type: "OPEN_STRAWBERRY" });
+                  else if (id === "noodle-shop") dispatch({ type: "OPEN_NOODLE" });
+                }}
+              />
             ) : (
               <BedroomScene
                 frameRef={frameRef}
                 player={state.player}
                 camera={state.camera}
                 interactables={BEDROOM_INTERACTABLES}
-                activeIds={activeIds}
+                activeIds={bedroomActiveIds}
                 completedIds={completedIds}
                 basinDropped={state.basinDropped}
                 onHotspotClick={(id) => {
@@ -326,7 +448,7 @@ export function BedroomGameClient() {
         {!introActive ? (
           <QuestSidebar
             currentQuest={getCurrentQuestText(state.phase, state.letterRead, state.fragments)}
-            nextTeasers={getNextQuestTeasers(state.phase)}
+            nextTeasers={getNextQuestTeasers(state.phase, state.fragments)}
             fragments={state.fragments}
             onReplayFragment={(fragmentId) => dispatch({ type: "REPLAY_FRAGMENT", fragmentId })}
           />

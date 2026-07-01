@@ -5,7 +5,7 @@ export type CutsceneLine = {
   meta: string;
   portrait: CutscenePortrait;
   text: string;
-  hook?: "hero-awake" | "mother-visible" | "basin-dropped" | "unlock-f1" | "cat-beds-done";
+  hook?: "hero-awake" | "mother-visible" | "basin-dropped" | "unlock-f1" | "unlock-f2" | "unlock-f3" | "cat-beds-done";
 };
 
 export const OPENING_LETTER_PARAGRAPHS = [
@@ -154,10 +154,16 @@ export const FARM_ENTRY_CUTSCENE: CutsceneLine[] = [
     text: "อากาศข้างนอก... คุ้นมาก บ้านบนดอยนี่แหละ"
   },
   {
+    speaker: "Perthyw",
+    meta: "Thanyawee Thanawaritkiat",
+    portrait: "hero",
+    text: "เริ่มจากสวนผักผลไม้ก่อนแล้วกัน... บางอย่างตรงนั้นดูคุ้นมาก"
+  },
+  {
     speaker: "ระบบ",
     meta: "Memory Farm",
     portrait: "system",
-    text: "ออกจากห้องนอนแล้ว — ลองเดินสำรวจสวนผักผลไม้ บ่อน้ำ และป่าเพื่อหา Fragment ถัดไป"
+    text: "ลองหาสตรอเบอร์พิเศษในสวน — นั่นอาจเป็นเศษความทรงจำชิ้นถัดไป"
   }
 ];
 

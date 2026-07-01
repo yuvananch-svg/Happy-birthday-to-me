@@ -5,6 +5,8 @@ import {
   OPENING_LETTER_PARAGRAPHS
 } from "@/lib/game/scenes/bedroom/cutscenes";
 import { MOTHER_F1_MEMORY_IMAGE } from "@/lib/game/scenes/bedroom/assets";
+import { F2_MEMORY_CAPTION, F3_MEMORY_CAPTION } from "@/lib/game/scenes/farm/cutscenes";
+import { getFragmentName } from "@/lib/game/quest/fragment-state";
 import type { ModalState } from "@/lib/game/bedroom-reducer";
 import styles from "./game-modal.module.css";
 
@@ -26,7 +28,7 @@ export function GameModal({ modal, onClose }: GameModalProps) {
     );
   }
 
-  if (modal.type === "memory") {
+  if (modal.type === "memory" && modal.fragmentId === 1) {
     return (
       <ModalShell title="Fragment 1: ความทรงจำของแม่" onClose={onClose}>
         <div className={styles.memoryPhoto}>
@@ -41,6 +43,44 @@ export function GameModal({ modal, onClose }: GameModalProps) {
         {F1_MEMORY_CAPTION.map((line) => (
           <p key={line}>{line}</p>
         ))}
+      </ModalShell>
+    );
+  }
+
+  if (modal.type === "memory" && modal.fragmentId === 2) {
+    return (
+      <ModalShell title="Fragment 2: สวนผักผลไม้บนดอย" onClose={onClose}>
+        <div className={styles.memoryPlaceholder}>
+          <p>
+            <strong>รูปสวนผลไม้จริงจะใส่ที่นี่ภายหลัง</strong>
+          </p>
+        </div>
+        {F2_MEMORY_CAPTION.map((line) => (
+          <p key={line}>{line}</p>
+        ))}
+      </ModalShell>
+    );
+  }
+
+  if (modal.type === "memory" && modal.fragmentId === 3) {
+    return (
+      <ModalShell title="Fragment 3: ก๋วยเตี๋ยวริมบ่อน้ำ" onClose={onClose}>
+        <div className={styles.memoryPlaceholder}>
+          <p>
+            <strong>รูปเดทกินก๋วยเตี๋ยวริมบ่อน้ำจริงจะใส่ที่นี่ภายหลัง</strong>
+          </p>
+        </div>
+        {F3_MEMORY_CAPTION.map((line) => (
+          <p key={line}>{line}</p>
+        ))}
+      </ModalShell>
+    );
+  }
+
+  if (modal.type === "memory") {
+    return (
+      <ModalShell title={getFragmentName(modal.fragmentId)} onClose={onClose}>
+        <p>ความทรงจำนี้ยังไม่พร้อมในเวอร์ชันนี้</p>
       </ModalShell>
     );
   }

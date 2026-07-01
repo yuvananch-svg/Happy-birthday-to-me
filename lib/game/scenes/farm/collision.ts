@@ -1,8 +1,11 @@
 import { cameraFollowPlayer } from "@/lib/game/engine/camera";
-import type { Point, Rect } from "@/lib/game/engine/types";
+import type { PlayerEntity, Point, Rect } from "@/lib/game/engine/types";
 
 /** Wide outdoor farm map — matches `public/scenes/farm/farm-outdoor.png` (6336×2688). */
 export const FARM_WORLD = { w: 6336, h: 2688 } as const;
+
+/** Pond-east / forest zone — matches `public/scenes/farm/farm-pond-east.png` (6336×2688). */
+export const FARM_POND_EAST_WORLD = FARM_WORLD;
 
 /** Slightly wider zoom than bedroom to fit the panoramic map. */
 export const FARM_WORLD_ZOOM = 0.36;
@@ -28,9 +31,10 @@ export const FARM_PLAYER_SPAWN = {
 
 export function getFarmSpawnCamera(
   viewport = FARM_DEFAULT_VIEWPORT,
-  player = FARM_PLAYER_SPAWN
+  player: PlayerEntity = FARM_PLAYER_SPAWN,
+  world = FARM_WORLD
 ): Point {
-  return cameraFollowPlayer(player, viewport, FARM_WORLD, FARM_WORLD_ZOOM);
+  return cameraFollowPlayer(player, viewport, world, FARM_WORLD_ZOOM);
 }
 
 /** Prototype free-walk — world edge clamping only. */
